@@ -17,6 +17,5 @@ let config = {
   height: 360,
   scene: gameScene
 };
-
 //create a new game, pass the configuration
 let game = new Phaser.Game(config);
