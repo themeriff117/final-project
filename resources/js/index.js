@@ -1,6 +1,7 @@
 //NOTES FROM 'COMPLETE COURSE - PHASER 101 IN 1 HOUR'
 //aka game.js
 
+import Phaser from 'phaser' //is that right?
 //create a new scene
 let gameScene = new Phaser.Scene('Game');
 
@@ -9,12 +10,12 @@ gameScene.preload = function() {
   //load images
   //this.load.image('background', 'assets/generic-rpg-pack/rpg-pack/tiles/generic-rpg-Slice.png');
   this.load.spritesheet('warrior', '../final-project/assets/Warrior/SpriteSheet/Warrior_Sheet-Effect.png');
-  this.load.image("bkg-tiles",  '../final-project/assets/generic-rpg-pack/rpg-pack/tiles');
+  this.load.image('bkg-tiles', '../final-project/assets/full-bkg.json');
 }
 
 gameScene.create = function() {
   //this.add.image(100, 100, 'background');
-  this.add.sprite(0, 0, 'background');
+  this.add.sprite(0, 0, 'bkg-tiles');
 
   bg.setOrigin(0, 0);
   bg.setPosition(50, 50);
