@@ -1,4 +1,5 @@
 //BOOTSCENE
+/*
 var BootScene = new Phaser.Class({
     Extends: Phaser.Scene,
     initialize:
@@ -6,6 +7,7 @@ var BootScene = new Phaser.Class({
     {
         Phaser.Scene.call(this, { key: 'BootScene' });
     },
+    */
 
 //CONFIG
 var config = {
@@ -19,16 +21,17 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: true // set to true to view zones
+            debug: true
         }
     },
     scene: [
-        BootScene,
+        //BootScene,
         SceneOne
     ]
 };
 
 var game = new Phaser.Game(config);
+
 
 //PRELOAD
 function preload ()
@@ -50,6 +53,7 @@ function preload ()
 //CREATE
 function create ()
 {
+  //this.add.image(400, 300, 'background');
   this.scene.start('SceneOne');
 
 }
@@ -70,7 +74,7 @@ var SceneOne = new Phaser.Class({
     },
 
     create: function ()
-    {
+{
         //var map = this.make.tilemap({ key: 'bkg' });
         //var tiles = map.addTilesetImage('spritesheet', 'tiles');
         // creating the layers
@@ -82,34 +86,39 @@ var SceneOne = new Phaser.Class({
 //PLAYER KEY MOVEMENT
 this.anims.create({
   key: "left",
-  framesL this.anims.generateFrameNumbers('player', {start: 0, end: 0}),
-  //frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
-  //frameRate: 10,
+  //framesL this.anims.generateFrameNumbers('player', {start: 0, end: 0}),
+  frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
+  frameRate: 10,
   repeat: -1
 });
+
 this.anims.create({
-  key: "right",
-  framesL this.anims.generateFrameNumbers('player', {start: 2, end: 2}),
+    key: 'right',
+    frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
+    frameRate: 10,
+    repeat: -1
 });
+
 this.anims.create({
-  key: "up",
-  framesL this.anims.generateFrameNumbers('player', {start: 3, end: 3}),
+    key: 'up',
+    frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
+    frameRate: 10,
+    repeat: -1
 });
+
 this.anims.create({
-  key: "down",
-  framesL this.anims.generateFrameNumbers('player', {start: 1, end: 1}),
-  repeat: -1
+    key: 'down',
+    frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
+    frameRate: 10,
+    repeat: -1
 });
 
 //PLAYER RULES
 this.player = this.physics.add.sprite(50, 100, 'player', 6);
-//?What method is this supposed to be in?
 player.setCollideWorldBounds(true);
 cursors = this.input.keyboard.createCursorKeys();
 this.physics.world.bounds.width = map.widthInPixels;
 this.physics.world.bounds.height = map.heightInPixels;
-//haven't added obstacles yet:
-//this.physics.add.collider(this.player, obstacles);
 
 //CAMERA RULES
 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -117,3 +126,4 @@ this.cameras.main.startFollow(this.player);
 this.cameras.main.roundPixels = true;
 
 }
+})
