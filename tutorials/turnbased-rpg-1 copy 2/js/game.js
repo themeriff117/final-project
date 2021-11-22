@@ -10,36 +10,33 @@ var BootScene = new Phaser.Class({
     {
         Phaser.Scene.call(this, { key: 'BootScene' });
     },
+//
 
     preload: function ()
     {
         // map tiles
-        //this.load.image('tiles', 'assets/map/spritesheet.png');
-        this.load.image('tiles', 'assets/cozyfarm/free.png');
+        this.load.image('tiles', 'assets/map/spritesheet.png');
 
         // map in json format
-        //this.load.tilemapTiledJSON('map', 'assets/map/map.json');
-        this.load.tilemapTiledJSON('map', 'assets/cozyfarm/mycozyfarm.json');
+        this.load.tilemapTiledJSON('map', 'assets/map/map.json');
 
         // our two characters
-        //this.load.spritesheet('player', 'assets/cozyfarm/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
-        //this.load.spritesheet('player', 'assets/HobbitSpriteSheetPublished.png', { frameWidth: 60, frameHeight: 60 , margin: 0, spacing: 0 });
-        this.load.spritesheet('player', 'assets/Hobbit/HobbitRunOnlyPublished.png', { frameWidth: 20, frameHeight: 20, margin: 1, spacing: 1 });
+        this.load.spritesheet('player', 'assets/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
     },
 
     create: function ()
     {
-        //this.add.image(400, 400, 'background');
         // start the WorldScene
         this.scene.start('WorldScene');
-
     }
 });
 
-
 var WorldScene = new Phaser.Class({
+
     Extends: Phaser.Scene,
+
     initialize:
+
     function WorldScene ()
     {
         Phaser.Scene.call(this, { key: 'WorldScene' });
@@ -52,52 +49,43 @@ var WorldScene = new Phaser.Class({
 
     create: function ()
     {
-
         // create the map
         var map = this.make.tilemap({ key: 'map' });
-        //this.add.image(400, 400, 'background');
 
         // first parameter is the name of the tilemap in tiled
-        var tiles = map.addTilesetImage('cozyassets', 'tiles');
-        //Wants name given on Tiled
+        var tiles = map.addTilesetImage('spritesheet', 'tiles');
 
         // creating the layers
-        var grass = map.createStaticLayer('Ground', tiles, 0, 0);
-        //Wants Tiled layer names
+        var grass = map.createStaticLayer('Grass', tiles, 0, 0);
         var obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
 
         // make all tiles in obstacles collidable
         obstacles.setCollisionByExclusion([-1]);
 
+        //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
         this.anims.create({
             key: 'left',
-            //frames: this.anims.generateFrameNumbers('player', { frames: [1, 7, 1, 13] }),
-            //frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
-            frames: this.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 3, 4]}),
+            frames: this.anims.generateFrameNumbers('player', { frames: [1, 7, 1, 13]}),
             frameRate: 10,
             repeat: -1
         });
+
+        // animation with key 'right'
         this.anims.create({
             key: 'right',
-            //frames: this.anims.generateFrameNumbers('player', { frames: [1, 7, 1, 13] }),
-            //frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
-            frames: this.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 3, 4]}),
+            frames: this.anims.generateFrameNumbers('player', { frames: [1, 7, 1, 13] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'up',
-            //frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
-            //frames: this.anims.generateFrameNumbers('player', { frames: [2, 8, 2, 14]}),
-            frames: this.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 3, 4]}),
+            frames: this.anims.generateFrameNumbers('player', { frames: [2, 8, 2, 14]}),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'down',
-            //frames: this.anims.generateFrameNumbers('player', { frames: [63, 64, 65, 66]}),
-            //frames: this.anims.generateFrameNumbers('player', { frames: [ 0, 6, 0, 12 ] }),
-            frames: this.anims.generateFrameNumbers('player', { frames: [0, 1, 2, 3, 4]}),
+            frames: this.anims.generateFrameNumbers('player', { frames: [ 0, 6, 0, 12 ] }),
             frameRate: 10,
             repeat: -1
         });
@@ -121,8 +109,8 @@ var WorldScene = new Phaser.Class({
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
 
+        //HAVENT ADDED ENEMIES YET
         // where the enemies will be
-
         this.spawns = this.physics.add.group({ classType: Phaser.GameObjects.Zone });
         for(var i = 0; i < 30; i++) {
             var x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
@@ -192,7 +180,6 @@ var WorldScene = new Phaser.Class({
         {
             this.player.anims.stop();
         }
-
     }
 
 });
@@ -208,7 +195,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: true // set to true to view zones
+            debug: false // set to true to view zones
         }
     },
     scene: [
