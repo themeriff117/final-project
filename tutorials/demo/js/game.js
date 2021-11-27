@@ -22,6 +22,12 @@ var BootScene = new Phaser.Class({
         // our two characters
         //this.load.spritesheet('player', 'assets/cozyfarm/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('player', 'assets/Hobbit/HobbitRunOnlyPublished.png', { frameWidth: 20, frameHeight: 20, margin: 1, spacing: 1 });
+
+        //NPC quest giver
+        this.load.spritesheet('npc', 'assets/Idle (38x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 6 });
+
+        //Apple
+        this.load.image('apple', 'assets/rpgitemspack/Item__64.png');
     },
 
     create: function ()
@@ -61,7 +67,9 @@ var WorldScene = new Phaser.Class({
         // make all tiles in obstacles collidable
         obstacles.setCollisionByExclusion([-1]);
 
+        //npc.anims.play("spin"); //idle
 
+        //Player movement
         this.anims.create({
             key: 'left',
             //frames: this.anims.generateFrameNumbers('player', { frames: [1, 7, 1, 13] }),
@@ -95,8 +103,19 @@ var WorldScene = new Phaser.Class({
             repeat: -1
         });
 
-        // our player sprite created through the phycis system
+        // our player sprite created through the phsics system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
+
+        //NPC PHYSICS
+        this.npc = this.physics.add.sprite(230, 210, 'npc', 6);
+
+        //this.physics.add.collider(this.player, this.npc); //pushes npc off screen
+        //this.physics.add.overlap(this.player, this.npc, false); //player phases through npc
+
+
+
+
+
 
         // don't go out of the map
         this.physics.world.bounds.width = map.widthInPixels;
