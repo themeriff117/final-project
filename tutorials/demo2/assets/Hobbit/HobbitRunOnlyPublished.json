@@ -1,0 +1,209 @@
+{
+	"textures": [
+		{
+			"image": "HobbitRunOnlyPublished.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 23,
+				"h": 184
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "Hobbit - run2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 20,
+						"w": 21,
+						"h": 19
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 21,
+						"h": 19
+					}
+				},
+				{
+					"filename": "Hobbit - run3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 20,
+						"w": 21,
+						"h": 19
+					},
+					"frame": {
+						"x": 1,
+						"y": 22,
+						"w": 21,
+						"h": 19
+					}
+				},
+				{
+					"filename": "Hobbit - run8.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 20,
+						"w": 21,
+						"h": 19
+					},
+					"frame": {
+						"x": 1,
+						"y": 43,
+						"w": 21,
+						"h": 19
+					}
+				},
+				{
+					"filename": "Hobbit - run9.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 21,
+						"w": 21,
+						"h": 19
+					},
+					"frame": {
+						"x": 1,
+						"y": 64,
+						"w": 21,
+						"h": 19
+					}
+				},
+				{
+					"filename": "Hobbit - run7.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 21,
+						"w": 21,
+						"h": 18
+					},
+					"frame": {
+						"x": 1,
+						"y": 85,
+						"w": 21,
+						"h": 18
+					}
+				},
+				{
+					"filename": "Hobbit - run1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 21,
+						"w": 20,
+						"h": 19
+					},
+					"frame": {
+						"x": 1,
+						"y": 105,
+						"w": 20,
+						"h": 19
+					}
+				},
+				{
+					"filename": "Hobbit - run4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 22,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 1,
+						"y": 126,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "Hobbit - run6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 22,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 1,
+						"y": 146,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "Hobbit - run5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 23,
+						"w": 20,
+						"h": 17
+					},
+					"frame": {
+						"x": 1,
+						"y": 166,
+						"w": 20,
+						"h": 17
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:01a7d662720f84180e45a8f0301f1088:2341d06f61b1ee082b8d7c49663cd069:9a178286b7e5ad92390a1421b7412792$"
+	}
+}
