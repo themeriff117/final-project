@@ -1,23 +1,22 @@
-//import MenuScene from 'js/menuscene.js'
-
-var BootScene = new Phaser.Class({
+var WorldScene = new Phaser.Class({
     Extends: Phaser.Scene,
     initialize:
-
-    function BootScene ()
+    function WorldScene ()
     {
-        Phaser.Scene.call(this, { key: 'BootScene' });
+        Phaser.Scene.call(this, { key: 'WorldScene' });
+        this.npcFound = false;
+        this.appleFound = false;
     },
 
     preload: function ()
     {
-        // map tiles
+        //map tiles
         //this.load.image('tiles', 'assets/map/spritesheet.png');
         this.load.image('tiles', 'assets/cozyfarm/free.png');
 
         // map in json format
-        //this.load.tilemapTiledJSON('map', 'assets/map/map.json');
-        this.load.tilemapTiledJSON('map', 'assets/cozyfarm/mycozyfarm.json');
+        //this.load.tilemapTiledJSON('map', 'assets/cozyfarm/mycozyfarm.json');
+        this.load.tilemapTiledJSON('map', 'assets/cozyfarm/farm3part4.json');
 
         //this.load.spritesheet('player', 'assets/cozyfarm/RPG_assets.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('player', 'assets/Hobbit/HobbitRunOnlyPublished.png', { frameWidth: 20, frameHeight: 20, margin: 1, spacing: 1 });
@@ -28,43 +27,52 @@ var BootScene = new Phaser.Class({
         //Apple
         this.load.image('apple', 'assets/rpgitemspack/Item__64.png');
 
-        //load dialog plugin
-        this.load.plugin('DialogModalPlugin', 'js/dialog_plugin.js');
     },
-
+    foundNpc : function(player, npc){
+        console.log('Found Npc');
+        //this.cameras.main.flash(500);
+        txtX = npc.x -40;
+        txtY = npc.y -20;
+        if ( this.npcFound == false){
+            this.npcFound = true;
+            this.scoreTextNpc   = this.add.text(txtX ,txtY, 'YOU! FIND MY APPLE!', { fontSize: '8px', fill: 'white' });
+            appleX = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
+            appleY  = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
+            this.apple = this.physics.add.sprite(appleX, appleY, 'apple');
+            this.physics.add.overlap(this.player, this.apple, this.foundApple, false, this);
+            //this.timer=setInterval(this.moveApple, 5000);
+        }
+    },
+    foundApple : function(player, apple){
+        console.log('Found Apple');
+        //this.cameras.main.flash(500);
+        txtX = apple.x -20;
+        txtY = apple.y -20;
+        if (this.appleFound == false && this.npcFound == true)
+        {
+            this.appleFound = true;
+           // this.scoreTextApple   = this.add.text(txtX ,txtY, 'You found the Apple', { fontSize: '8px', fill: '#000' });
+            this.scoreTextNpc.setText('You found my apple! YIPPEE!!!!!');
+            this.scoreTextNpc.setColor("white");
+            //clearInterval(this.timer);
+        }
+    },
+    moveApple : function() {
+      console.log('Move Apple');
+      console.log(this.apple.x);
+      console.log(this.apple.y);
+      this.apple.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
+      this.apple.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
+},
     create: function ()
     {
-        this.scene.start('WorldScene');
-
-        this.sys.install('DialogModalPlugin');
-        console.log(this.sys.dialogModal);
-        this.sys.dialogModal.init();
-        this.sys.dialogModal.setText('Hi there!', true);
-    }
-}); //end BootScene
-
-var WorldScene = new Phaser.Class({
-    Extends: Phaser.Scene,
-    initialize:
-    function WorldScene ()
-    {
-        Phaser.Scene.call(this, { key: 'WorldScene' });
-    },
-
-    preload: function ()
-    {
-
-    },
-
-    create: function ()
-    {
-
         // create the map
         var map = this.make.tilemap({ key: 'map' });
 
         // first parameter is the name of the tilemap in tiled
-        var tiles = map.addTilesetImage('cozyassets', 'tiles');
+        //var tiles = map.addTilesetImage('cozyassets', 'tiles');
         //Wants name given on Tiled
+        var tiles = map.addTilesetImage('free', 'tiles');
 
         // creating the layers
         var grass = map.createStaticLayer('Ground', tiles, 0, 0);
@@ -73,6 +81,10 @@ var WorldScene = new Phaser.Class({
 
         // make all tiles in obstacles collidable
         obstacles.setCollisionByExclusion([-1]);
+
+        // don't go out of the map
+        this.physics.world.bounds.width = map.widthInPixels;
+        this.physics.world.bounds.height = map.heightInPixels;
 
         //npc.anims.play("spin"); //idle
 
@@ -112,24 +124,15 @@ var WorldScene = new Phaser.Class({
 
         // our player sprite created through the phsics system
         this.player = this.physics.add.sprite(50, 100, 'player', 6);
+        this.player.setCollideWorldBounds(true);
+                // don't walk on trees
+        this.physics.add.collider(this.player, obstacles);
 
         //NPC
         this.npc = this.physics.add.sprite(230, 210, 'npc', 6);
 
-        //this.physics.add.collider(this.player, this.npc); //pushes npc off screen
-        //this.physics.add.overlap(this.player, this.npc, false); //player phases through npc
-
-////////////
-///////////
-////////////
-///////////
-        // don't go out of the map
-        this.physics.world.bounds.width = map.widthInPixels;
-        this.physics.world.bounds.height = map.heightInPixels;
-        this.player.setCollideWorldBounds(true);
-
-        // don't walk on trees
-        this.physics.add.collider(this.player, obstacles);
+        // what happens when player and npc hit
+        this.physics.add.overlap(this.player, this.npc, this.foundNpc, false, this);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -138,28 +141,8 @@ var WorldScene = new Phaser.Class({
 
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        // where the enemies will be
-        //WIll break game if commented out!
-        this.spawns = this.physics.add.group({ classType: Phaser.GameObjects.Zone });
-        for(var i = 0; i < 30; i++) {
-            var x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-            var y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
-            // parameters are x, y, width, height
-            this.spawns.create(x, y, 20, 20);
-        }
-
-
-        // add collider
-        this.physics.add.overlap(this.player, this.spawns, this.onMeetEnemy, false, this);
     },
-    onMeetEnemy: function(player, zone) {
-        // we move the zone to some other location
-        zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-        zone.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
 
-        // start battle
-    },
     update: function (time, delta)
     {
     //    this.controls.update(delta);
@@ -209,15 +192,8 @@ var WorldScene = new Phaser.Class({
         {
             this.player.anims.stop();
         }
-
     }
-////////////
-///////////
-////////////
-///////////
-
 }); //end WorldScene
-
 
 var config = {
     type: Phaser.AUTO,
@@ -230,322 +206,13 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: true // set to true to view zones
+            debug: false // set to true to view zones
         }
     },
     scene: [
-        BootScene,
         WorldScene
         //MenuScene
     ]
 }; //end config
 
-//import { config } from './config.js'
-
 var game = new Phaser.Game(config);
-
-
-
-
-
-
-//PIZZA LEGENDS HELP!
-
-class Overworld {
- constructor(config) {
-   this.element = config.element;
-   this.canvas = this.element.querySelector(".game-canvas");
-   this.ctx = this.canvas.getContext("2d");
-   this.map = null;
- }
-  startGameLoop() {
-    const step = () => {
-      //Clear off the canvas
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      //Establish the camera person
-      const cameraPerson = this.map.gameObjects.hero;
-      //Update all objects
-      Object.values(this.map.gameObjects).forEach(object => {
-        object.update({
-          arrow: this.directionInput.direction,
-          map: this.map,
-        })
-      })
-      //Draw Lower layer
-      this.map.drawLowerImage(this.ctx, cameraPerson);
-      //Draw Game Objects
-      Object.values(this.map.gameObjects).sort((a,b) => {
-        return a.y - b.y;
-      }).forEach(object => {
-        object.sprite.draw(this.ctx, cameraPerson);
-      })
-      //Draw Upper layer
-      this.map.drawUpperImage(this.ctx, cameraPerson);
-      requestAnimationFrame(() => {
-        step();
-      })
-    }
-    step();
- }
- bindActionInput() {
-   new KeyPressListener("Enter", () => {
-     //Is there a person here to talk to?
-     this.map.checkForActionCutscene()
-   })
- }
- bindHeroPositionCheck() {
-   document.addEventListener("PersonWalkingComplete", e => {
-     if (e.detail.whoId === "hero") {
-       //Hero's position has changed
-       this.map.checkForFootstepCutscene()
-     }
-   })
- }
- startMap(mapConfig) {
-  this.map = new OverworldMap(mapConfig);
-  this.map.overworld = this;
-  this.map.mountObjects();
- }
- init() {
-  this.startMap(window.OverworldMaps.DemoRoom);
-  this.bindActionInput();
-  this.bindHeroPositionCheck();
-  this.directionInput = new DirectionInput();
-  this.directionInput.init();
-  this.startGameLoop();
-  }
-} //end Overworld.js
-
-//PizzaRPG Part 9 - TEXT MESSAGE CLASS
-class TextMessage {
-  constructor({ text, onComplete }) {
-    this.text = text;
-    this.onComplete = onComplete;
-    this.element = null;
-  }
-  createElement() {
-    //Create the element
-    this.element = document.createElement("div");
-    this.element.classList.add("TextMessage");
-    this.element.innerHTML = (`
-      <p class="TextMessage_p">${this.text}</p>
-      <button class="TextMessage_button">Next</button>
-    `)
-    this.element.querySelector("button").addEventListener("click", () => {
-      //Close the text message
-      this.done();
-    });
-    this.actionListener = new KeyPressListener("Enter", () => {
-      this.actionListener.unbind();
-      this.done();
-    })
-  }
-  done() {
-    this.element.remove();
-    this.onComplete();
-  }
-  init(container) {
-    this.createElement();
-    container.appendChild(this.element)
-  }
-} //end TextMessage.js
-
-class OverworldEvent {
-textMessage(resolve) {
-    if (this.event.faceHero) {
-      const obj = this.map.gameObjects[this.event.faceHero];
-      obj.direction = utils.oppositeDirection(this.map.gameObjects["hero"].direction);
-    }
-    const message = new TextMessage({
-      text: this.event.text,
-      onComplete: () => resolve()
-    })
-    message.init( document.querySelector(".game-container") )
-  }
-  init() {
-    return new Promise(resolve => {
-      this[this.event.type](resolve)
-    })
-  }
-} //end OverworldEvent
-
-class DirectionInput {
-  constructor() {
-    this.heldDirections = [];
-    this.map = {
-      "ArrowUp": "up",
-      "KeyW": "up",
-      "ArrowDown": "down",
-      "KeyS": "down",
-      "ArrowLeft": "left",
-      "KeyA": "left",
-      "ArrowRight": "right",
-      "KeyD": "right",
-    }
-  }
-  get direction() {
-    return this.heldDirections[0];
-  }
-  init() {
-    document.addEventListener("keydown", e => {
-      const dir = this.map[e.code];
-      if (dir && this.heldDirections.indexOf(dir) === -1) {
-        this.heldDirections.unshift(dir);
-      }
-    });
-    document.addEventListener("keyup", e => {
-      const dir = this.map[e.code];
-      const index = this.heldDirections.indexOf(dir);
-      if (index > -1) {
-        this.heldDirections.splice(index, 1);
-      }
-    })
-  }
-} //end DirectionInput.js
-
-class KeyPressListener {
-  constructor(keyCode, callback) {
-    let keySafe = true;
-    this.keydownFunction = function(event) {
-      if (event.code === keyCode) {
-         if (keySafe) {
-            keySafe = false;
-            callback();
-         }
-      }
-   };
-   this.keyupFunction = function(event) {
-      if (event.code === keyCode) {
-         keySafe = true;
-      }
-   };
-   document.addEventListener("keydown", this.keydownFunction);
-   document.addEventListener("keyup", this.keyupFunction);
-  }
-  unbind() {
-    document.removeEventListener("keydown", this.keydownFunction);
-    document.removeEventListener("keyup", this.keyupFunction);
-  }
-} //end KeyPressListener.js
-
-
-
-///////////////
-//////////////
-///////////////
-//////////////
-
-/*
-//START OVERWORLD MAP
-class OverworldMap {
-  constructor(config) {
-    this.overworld = null;
-    this.gameObjects = config.gameObjects;
-    this.cutsceneSpaces = config.cutsceneSpaces || {};
-    this.walls = config.walls || {};
-    this.lowerImage = new Image();
-    this.lowerImage.src = config.lowerSrc;
-    this.upperImage = new Image();
-    this.upperImage.src = config.upperSrc;
-    this.isCutscenePlaying = false;
-  }
-  isSpaceTaken(currentX, currentY, direction) {
-    const {x,y} = utils.nextPosition(currentX, currentY, direction);
-    return this.walls[`${x},${y}`] || false;
-  }
-  mountObjects() {
-    Object.keys(this.gameObjects).forEach(key => {
-      let object = this.gameObjects[key];
-      object.id = key;
-      object.mount(this);
-    })
-  }
-  async startCutscene(events) {
-    this.isCutscenePlaying = true;
-    for (let i=0; i<events.length; i++) {
-      const eventHandler = new OverworldEvent({
-        event: events[i],
-        map: this,
-      })
-      await eventHandler.init();
-    }
-    this.isCutscenePlaying = false;
-    //Reset NPCs to do their idle behavior
-    Object.values(this.gameObjects).forEach(object => object.doBehaviorEvent(this))
-  }
-  checkForActionCutscene() {
-    const hero = this.gameObjects["player"];
-    const nextCoords = utils.nextPosition(player.x, player.y, player.direction);
-    const match = Object.values(this.gameObjects).find(object => {
-      return `${object.x},${object.y}` === `${nextCoords.x},${nextCoords.y}`
-    });
-    if (!this.isCutscenePlaying && match && match.talking.length) {
-      this.startCutscene(match.talking[0].events)
-    }
-  }
-  checkForFootstepCutscene() {
-    const hero = this.gameObjects["player"];
-    const match = this.cutsceneSpaces[ `${player.x},${player.y}` ];
-    if (!this.isCutscenePlaying && match) {
-      this.startCutscene( match[0].events )
-    }
-  }
-}
-window.OverworldMaps = {
-    gameObjects: {
-      hero: new Person({
-        isPlayerControlled: true,
-        x: utils.withGrid(5),
-        y: utils.withGrid(6),
-      }),
-      npcA: new Person({
-        x: utils.withGrid(7),
-        y: utils.withGrid(9),
-        src: "/images/characters/people/npc1.png",
-        behaviorLoop: [
-          { type: "stand",  direction: "left", time: 800 },
-          { type: "stand",  direction: "up", time: 800 },
-          { type: "stand",  direction: "right", time: 1200 },
-          { type: "stand",  direction: "up", time: 300 },
-        ],
-        talking: [
-          {
-            events: [
-              { type: "textMessage", text: "I'm busy...", faceHero: "npcA" },
-              { type: "textMessage", text: "Go away!"},
-              { who: "hero", type: "walk",  direction: "up" },
-            ]
-          }
-        ]
-      }),
-    },
-    cutsceneSpaces: {
-      [utils.asGridCoord(7,4)]: [
-        {
-          events: [
-            { who: "npcB", type: "walk",  direction: "left" },
-            { who: "npcB", type: "stand",  direction: "up", time: 500 },
-            { type: "textMessage", text:"You can't be in there!"},
-            { who: "npcB", type: "walk",  direction: "right" },
-            { who: "hero", type: "walk",  direction: "down" },
-            { who: "hero", type: "walk",  direction: "left" },
-          ]
-        }
-      ],
-      [utils.asGridCoord(5,10)]: [
-        {
-          events: [
-            { type: "changeMap", map: "Kitchen" }
-          ]
-        }
-      ]
-    }
-
-  },
-}
-
-///////////////
-//////////////
-///////////////
-//////////////
-*/
