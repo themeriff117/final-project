@@ -149,6 +149,10 @@ var WorldScene = new Phaser.Class({
 
         this.otherpig = this.physics.add.sprite(400, 400, 'otherpig', 6);
 
+        //var npc = game.add.sprite(400, 400, 'npc', 6)
+        var idle = npc.animations.add('idle');
+        npc.animations.play('idle', 30, true);
+
         //npc idle animation:
         /* WAY 1
         this.anims.create({
@@ -178,7 +182,7 @@ var WorldScene = new Phaser.Class({
 
         //otherpig walk around animation
         //all I want is otherpig to walk to point A then point B in a loop
-        
+
 
 
         // what happens when player and npc hit
