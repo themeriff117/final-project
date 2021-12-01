@@ -22,12 +22,16 @@ var WorldScene = new Phaser.Class({
         this.load.spritesheet('player', 'assets/Hobbit/HobbitRunOnlyPublished.png', { frameWidth: 20, frameHeight: 20, margin: 1, spacing: 1 });
 
         //NPC quest giver
-        this.load.spritesheet('npc', 'assets/Idle (38x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 6 });
+        this.load.spritesheet('npc', 'assets/KingPig/Idle (38x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 6 });
+
+        //mean/other pig
+        this.load.spritesheet('otherpig', 'assets/Pig/Idle (34x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 14 })
 
         //Apple
         this.load.image('apple', 'assets/rpgitemspack/Item__64.png');
 
-    },
+    }, //end preload?
+
     foundNpc : function(player, npc){
         console.log('Found Npc');
         //this.cameras.main.flash(500);
@@ -43,6 +47,7 @@ var WorldScene = new Phaser.Class({
             //this.timer=setInterval(this.moveApple, 5000);
         }
     },
+
     foundApple : function(player, apple){
         console.log('Found Apple');
         //this.cameras.main.flash(500);
@@ -52,11 +57,14 @@ var WorldScene = new Phaser.Class({
         {
             this.appleFound = true;
            // this.scoreTextApple   = this.add.text(txtX ,txtY, 'You found the Apple', { fontSize: '8px', fill: '#000' });
-            this.scoreTextNpc.setText('You found my apple! YIPPEE!!!!!');
+            this.scoreTextNpc.setText('You found my apple! YIPPEE!!');
             this.scoreTextNpc.setColor("white");
             //clearInterval(this.timer);
         }
     },
+
+    //Trying to have the apple move in random spots around the map
+      //every few seconds
     moveApple : function() {
       console.log('Move Apple');
       console.log(this.apple.x);
@@ -64,8 +72,16 @@ var WorldScene = new Phaser.Class({
       this.apple.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
       this.apple.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
 },
+    timerApple : function() {
+      moveApple();
+      //game.add.tween(picture).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+    },
+
     create: function ()
     {
+        //window.setInterval(timerApple, 5000);
+        //game.time.events.add(Phaser.Timer.SECOND * 4, timerApple, this);
+
         // create the map
         var map = this.make.tilemap({ key: 'map' });
 
@@ -131,8 +147,43 @@ var WorldScene = new Phaser.Class({
         //NPC
         this.npc = this.physics.add.sprite(230, 210, 'npc', 6);
 
+        this.otherpig = this.physics.add.sprite(400, 400, 'otherpig', 6);
+
+        //npc idle animation:
+        /* WAY 1
+        this.anims.create({
+            frames: this.anims.generateFrameNumbers('npc', { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}),
+            //frames: this.anims.generateFrameNumbers('npc', {start: 0, end:11}),
+            frameRate: 10,
+            repeat: -1
+        });
+        npc.anims.play("spin");
+        */
+
+        /* WAY 2
+        function KingPig(game, x, y) {
+        Phaser.Sprite.call(this, game, x, y, 'npc');
+        this.animations.add('idle', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
+        this.animations.play('idle');
+        // physic properties
+        this.game.physics.enable(this);
+        this.body.collideWorldBounds = true;
+        this.body.velocity.x = KingPig.SPEED;
+        }
+        KingPig.SPEED = 10;
+        // inherit from Phaser.Sprite
+        KingPig.prototype = Object.create(Phaser.Sprite.prototype);
+        KingPig.prototype.constructor = KingPig;
+        */
+
+        //otherpig walk around animation
+        //all I want is otherpig to walk to point A then point B in a loop
+        
+
+
         // what happens when player and npc hit
         this.physics.add.overlap(this.player, this.npc, this.foundNpc, false, this);
+        //this.physics.add.overlap(this.player, this.otherpig, false, this);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -141,7 +192,7 @@ var WorldScene = new Phaser.Class({
 
         // user input
         this.cursors = this.input.keyboard.createCursorKeys();
-    },
+    }, //end create
 
     update: function (time, delta)
     {
@@ -192,8 +243,9 @@ var WorldScene = new Phaser.Class({
         {
             this.player.anims.stop();
         }
-    }
+    } //end update
 }); //end WorldScene
+
 
 var config = {
     type: Phaser.AUTO,
@@ -211,7 +263,6 @@ var config = {
     },
     scene: [
         WorldScene
-        //MenuScene
     ]
 }; //end config
 
