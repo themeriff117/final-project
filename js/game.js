@@ -1,3 +1,4 @@
+var gameover = false;
 var WorldScene = new Phaser.Class({
     Extends: Phaser.Scene,
     initialize:
@@ -45,7 +46,6 @@ var WorldScene = new Phaser.Class({
             appleY  = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
             this.apple = this.physics.add.sprite(appleX, appleY, 'apple');
             this.physics.add.overlap(this.player, this.apple, this.foundApple, false, this);
-            //this.timer=setInterval(this.moveApple, 5000);
         }
     },
 
@@ -65,11 +65,18 @@ var WorldScene = new Phaser.Class({
         txtY = apple.y -20;
         if (this.appleFound == false && this.npcFound == true)
         {
+          gameover = true;
             this.appleFound = true;
-           // this.scoreTextApple   = this.add.text(txtX ,txtY, 'You found the Apple', { fontSize: '8px', fill: '#000' });
             this.scoreTextNpc.setText('You found my apple! YIPPEE!!');
             this.scoreTextNpc.setColor("white");
-            //clearInterval(this.timer);
+            this.cameras.main.flash(500);
+            txtX = player.x -20;
+            txtY = player.y -20;
+            this.add.text(txtX, txtY, 'YOU WIN', { fontSize: '40px', fill: 'pink' });
+            //this.TextPig  = this.add.text(txtX ,txtY, 'REFRESH to play again!', { fontSize: '8px', fill: 'white' });
+            if (this.pigFound == true) {
+            this.TextPig.setText('REFRESH to play again!');
+          }
         }
     },
 
@@ -253,12 +260,14 @@ var WorldScene = new Phaser.Class({
     } //end update
 }); //end WorldScene
 
+var screenX = screen.width *.35;
+var screenY = screen.height * .3 ;
 
 var config = {
     type: Phaser.AUTO,
     parent: 'content',
-    width: 320,
-    height: 240,
+    width: screenX,
+    height: screenY,
     zoom: 2,
     pixelArt: true,
     physics: {
