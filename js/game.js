@@ -5,6 +5,7 @@ var WorldScene = new Phaser.Class({
     {
         Phaser.Scene.call(this, { key: 'WorldScene' });
         this.npcFound = false;
+        this.pigFound = false;
         this.appleFound = false;
     },
 
@@ -22,10 +23,11 @@ var WorldScene = new Phaser.Class({
         this.load.spritesheet('player', 'assets/Hobbit/HobbitRunOnlyPublished.png', { frameWidth: 20, frameHeight: 20, margin: 1, spacing: 1 });
 
         //NPC quest giver
-        this.load.spritesheet('npc', 'assets/KingPig/Idle (38x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 6 });
+        //this.load.spritesheet('npc', 'assets/KingPig/Idle (38x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 6 });
+        this.load.spritesheet('npc', 'assets/KingPig/Idle (38x28).png', { frameWidth: 38, frameHeight: 28, margin: 0, spacing: 0 });
 
         //mean/other pig
-        this.load.spritesheet('otherpig', 'assets/Pig/Idle (34x28).png', { frameWidth: 20, frameHeight: 20, margin: 8, spacing: 14 })
+        this.load.spritesheet('otherpig', 'assets/Pig/Idle (34x28).png', { frameWidth: 34, frameHeight: 28, margin: 0, spacing: 0 })
 
         //Apple
         this.load.image('apple', 'assets/rpgitemspack/Item__64.png');
@@ -34,7 +36,6 @@ var WorldScene = new Phaser.Class({
 
     foundNpc : function(player, npc){
         console.log('Found Npc');
-        //this.cameras.main.flash(500);
         txtX = npc.x -40;
         txtY = npc.y -20;
         if ( this.npcFound == false){
@@ -48,9 +49,18 @@ var WorldScene = new Phaser.Class({
         }
     },
 
+    foundOtherpig : function(player, otherpig) {
+        console.log('Found Otherpig');
+        txtX = otherpig.x -60;
+        txtY = otherpig.y -20;
+        if (this.pigFound == false) {
+          this.pigFound = true;
+          this.TextPig  = this.add.text(txtX ,txtY, 'Press SPACE to move apple!', { fontSize: '8px', fill: 'white' });
+        }
+    },
+
     foundApple : function(player, apple){
         console.log('Found Apple');
-        //this.cameras.main.flash(500);
         txtX = apple.x -20;
         txtY = apple.y -20;
         if (this.appleFound == false && this.npcFound == true)
@@ -72,14 +82,9 @@ var WorldScene = new Phaser.Class({
       this.apple.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
       this.apple.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
 },
-    timerApple : function() {
-      moveApple();
-      //game.add.tween(picture).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
-    },
 
     create: function ()
     {
-        //window.setInterval(timerApple, 5000);
         //game.time.events.add(Phaser.Timer.SECOND * 4, timerApple, this);
 
         // create the map
@@ -149,45 +154,31 @@ var WorldScene = new Phaser.Class({
 
         this.otherpig = this.physics.add.sprite(400, 400, 'otherpig', 6);
 
-        //var npc = game.add.sprite(400, 400, 'npc', 6)
-        var idle = npc.animations.add('idle');
-        npc.animations.play('idle', 30, true);
-
         //npc idle animation:
-        /* WAY 1
         this.anims.create({
+            key: 'idle',
             frames: this.anims.generateFrameNumbers('npc', { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}),
             //frames: this.anims.generateFrameNumbers('npc', {start: 0, end:11}),
             frameRate: 10,
             repeat: -1
         });
-        npc.anims.play("spin");
-        */
-
-        /* WAY 2
-        function KingPig(game, x, y) {
-        Phaser.Sprite.call(this, game, x, y, 'npc');
-        this.animations.add('idle', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], true);
-        this.animations.play('idle');
-        // physic properties
-        this.game.physics.enable(this);
-        this.body.collideWorldBounds = true;
-        this.body.velocity.x = KingPig.SPEED;
-        }
-        KingPig.SPEED = 10;
-        // inherit from Phaser.Sprite
-        KingPig.prototype = Object.create(Phaser.Sprite.prototype);
-        KingPig.prototype.constructor = KingPig;
-        */
+        this.npc.anims.play('idle');
 
         //otherpig walk around animation
         //all I want is otherpig to walk to point A then point B in a loop
 
+        this.anims.create({
+            key: 'idle2',
+            frames: this.anims.generateFrameNumbers('otherpig', { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}),
+            frameRate: 20,
+            repeat: -1
+        });
+        this.otherpig.anims.play('idle2');
 
 
         // what happens when player and npc hit
         this.physics.add.overlap(this.player, this.npc, this.foundNpc, false, this);
-        //this.physics.add.overlap(this.player, this.otherpig, false, this);
+        this.physics.add.overlap(this.player, this.otherpig, this.foundOtherpig, false, this);
 
         // limit camera to map
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -198,8 +189,20 @@ var WorldScene = new Phaser.Class({
         this.cursors = this.input.keyboard.createCursorKeys();
     }, //end create
 
+/*
+    function timerApple() {
+    game.add.tween(picture).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+    moveApple();
+}
+*/
+
     update: function (time, delta)
     {
+
+      if (this.cursors.space.isDown) {
+         this.moveApple();
+        }
+
     //    this.controls.update(delta);
 
         this.player.body.setVelocity(0);
